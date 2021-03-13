@@ -1,20 +1,20 @@
 module.exports = {
   siteMetadata: {
-    title: "BlueDrive",
+    title: 'BlueDrive',
   },
   plugins: [
-    "gatsby-plugin-sass",
-    "gatsby-plugin-image",
-    "gatsby-plugin-react-helmet",
-    "gatsby-plugin-sharp",
-    "gatsby-transformer-sharp",
+    'gatsby-plugin-image',
+    'gatsby-plugin-react-helmet',
+    'gatsby-plugin-sharp',
+    'gatsby-plugin-styled-components',
+    'gatsby-transformer-sharp',
     {
-      resolve: "gatsby-source-filesystem",
+      resolve: 'gatsby-source-filesystem',
       options: {
-        name: "images",
-        path: "./src/images/",
+        name: 'images',
+        path: './src/assets/images/',
       },
-      __key: "images",
+      __key: 'images',
     },
   ],
 };
