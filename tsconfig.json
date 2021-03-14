@@ -3,14 +3,14 @@
     "./src/**/*"
   ],
   "compilerOptions": {
-    "target": "es6",
+    "target": "ESNext",
     "module": "commonjs",
     "lib": [
       "dom",
       "es2017"
     ],
-    // "allowJs": true,
-    // "checkJs": true,
+    "allowJs": true,
+    "checkJs": true,
     "jsx": "react",
     "strict": true,
     "esModuleInterop": true,

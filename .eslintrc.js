@@ -1,9 +1,13 @@
 module.exports = {
   parser: `@typescript-eslint/parser`,
+  parserOptions: {
+    project: './tsconfig.json'
+  },
   extends: [
-    'plugin:@typescript-eslint/recommended',
-    'prettier/@typescript-eslint',
     'wesbos',
+    'eslint:recommended',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:@typescript-eslint/recommended-requiring-type-checking',
   ],
   plugins: ['@typescript-eslint'],
   rules: {
@@ -14,4 +18,5 @@ module.exports = {
       { extensions: ['.js', '.jsx', '.ts', '.tsx'] },
     ],
   },
+  ignorePatterns: ['.eslintrc.js', 'gatsby-config.js']
 };
