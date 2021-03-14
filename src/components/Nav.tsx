@@ -12,10 +12,10 @@ export default function Nav(): JSX.Element {
           <Link to="/page1">Page1</Link>
         </li>
         <li>
-          <Link to="/page1">Page2</Link>
+          <Link to="/page2">Page2</Link>
         </li>
         <li>
-          <Link to="/page1">Page3</Link>
+          <Link to="/page3">Page3</Link>
         </li>
       </ul>
     </nav>
