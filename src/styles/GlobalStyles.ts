@@ -18,6 +18,7 @@ const GlobalStyles = createGlobalStyle`
   }
 
   html{
+    height: 100vh;
     font-size: 10px;
     background-color: var(--dark);
   }
