@@ -17,4 +17,8 @@ module.exports = {
       __key: 'images',
     },
   ],
+  proxy: {
+    prefix: '/api',
+    url: 'http://localhost:8080',
+  },
 };

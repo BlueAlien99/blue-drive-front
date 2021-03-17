@@ -15,16 +15,13 @@ const GlobalStyles = createGlobalStyle`
     --dark: #36393f;
     --darker: #2f3136;
     --darkest: #202225;
+
+    --shadow-color: rgba(0, 0, 0, 0.8);
   }
 
   html{
     height: 100vh;
-    font-size: 10px;
     background-color: var(--dark);
-  }
-
-  body{
-    font-size: 2rem;
   }
 `;
 

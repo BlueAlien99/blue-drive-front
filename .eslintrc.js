@@ -1,12 +1,28 @@
-module.exports = {
-  extends: ['wesbos'],
-  settings: {
-    'import/resolver': {
-      node: {
-        extensions: ['.js', '.jsx', '.ts', '.tsx'],
-      },
+const importResolverSettings = {
+  'import/resolver': {
+    node: {
+      extensions: ['.js', '.jsx', '.ts', '.tsx'],
     },
   },
+};
+
+const prettierRules = {
+  'prettier/prettier': [
+    'error',
+    {
+      trailingComma: 'es5',
+      singleQuote: true,
+      printWidth: 100,
+      endOfLine: 'auto',
+      arrowParens: 'avoid',
+    },
+  ],
+};
+
+module.exports = {
+  extends: ['wesbos'],
+  rules: { ...prettierRules },
+  settings: { ...importResolverSettings },
   overrides: [
     {
       files: ['**/*.ts', '**/*.tsx'],
@@ -25,14 +41,9 @@ module.exports = {
         'no-use-before-define': 'off',
         '@typescript-eslint/no-use-before-define': ['error'],
         'react/jsx-filename-extension': [1, { extensions: ['.ts', '.tsx'] }],
+        ...prettierRules,
       },
-      settings: {
-        'import/resolver': {
-          node: {
-            extensions: ['.js', '.jsx', '.ts', '.tsx'],
-          },
-        },
-      },
+      settings: { ...importResolverSettings },
     },
   ],
 };

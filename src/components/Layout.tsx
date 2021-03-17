@@ -14,15 +14,20 @@ const SiteStyles = styled.div`
 
 const SidebarStyles = styled.div`
   height: 100%;
+  padding: 1rem;
+  box-sizing: border-box;
   display: grid;
   grid-template-rows: 1fr auto;
   background-color: var(--darker);
-  padding: 1rem;
+  box-shadow: 0 0 16px var(--shadow-color);
 `;
 
 const PageWrapper = styled.div`
   height: 100vh;
   overflow: auto;
+  display: grid;
+  align-items: center;
+  justify-content: center;
 `;
 
 export default function Layout({ children }: PageProps): JSX.Element {
