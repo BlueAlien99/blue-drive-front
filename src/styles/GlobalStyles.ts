@@ -23,6 +23,32 @@ const GlobalStyles = createGlobalStyle`
     height: 100vh;
     background-color: var(--dark);
   }
+  
+  button{
+    --btn-shadow-color: var(--primary);
+    border: none;
+    outline: none;
+
+    padding: 0.75rem;
+    color: var(--white);
+    background: var(--primary);
+    border-radius: 0.5rem;
+    box-shadow: 0 0 8px var(--btn-shadow-color);
+    transition: background-color 0.4s, box-shadow 0.2s;
+
+    &:hover{
+      background: var(--triadic1);
+    }
+
+    &:active{
+      --btn-shadow-color: var(--triadic1);
+    }
+
+    &:disabled{
+      background: var(--primary);
+      opacity: 50%;
+    }
+  }
 `;
 
 export default GlobalStyles;

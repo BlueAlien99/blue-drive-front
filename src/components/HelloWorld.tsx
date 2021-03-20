@@ -33,7 +33,7 @@ const defaultFetchState: FetchState = {
 export default function HelloWorld(): JSX.Element {
   const [fetchState, setFetchState] = useState(defaultFetchState);
 
-  const showSpinner = fetchState.status === 'idle' || fetchState.status === 'pending';
+  const showSpinner = fetchState.status === 'pending';
 
   const fetchData = () => {
     if (fetchState.status !== 'pending') {
@@ -56,7 +56,7 @@ export default function HelloWorld(): JSX.Element {
         {fetchState.status === 'success' && <p>{fetchState.payload}</p>}
         {fetchState.status === 'failed' && <p>Error: {fetchState.error}</p>}
       </>
-      <button type="button" onClick={fetchData}>
+      <button type="button" onClick={fetchData} disabled={showSpinner}>
         Fetch again
       </button>
     </HelloWorldStyles>

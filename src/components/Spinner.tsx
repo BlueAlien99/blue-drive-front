@@ -19,8 +19,7 @@ const SpinnerStyles = styled.div`
   height: var(--size);
   border: 6px solid var(--primary);
   border-radius: 100%;
-  animation: ${spinnerKeyframes} 1.5s cubic-bezier(0.3, 0, 0.7, 1) infinite
-    alternate;
+  animation: ${spinnerKeyframes} 1.5s cubic-bezier(0.3, 0, 0.7, 1) infinite alternate;
 `;
 
 export default function Spinner(): JSX.Element {
