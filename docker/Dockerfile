@@ -1,7 +1,7 @@
 FROM node:14.16.0-buster-slim
 WORKDIR /usr/src/BlueDrive/frontend
 
-COPY ./blue-drive-front .
+COPY . .
 
 RUN npm install
 RUN npm run build
