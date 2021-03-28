@@ -1,13 +1,14 @@
 pipeline {
-  agent {
-    docker { 
-      image 'node:14' 
-      reuseNode true
-    }
-  }
+  agent none
 
   stages {
     stage('Build') {
+      agent {
+        docker { 
+          image 'node:14' 
+          reuseNode true
+        }
+      }
       steps {
         script {
           echo 'Build...'
@@ -18,6 +19,12 @@ pipeline {
     }
 
     stage('Test') {
+      agent {
+        docker { 
+          image 'node:14' 
+          reuseNode true
+        }
+      }
       steps {
         script {
           echo 'Test...'
@@ -28,9 +35,12 @@ pipeline {
     }
 
     stage('Deploy') {
+      agent any
       steps {
         script {
           echo 'Deploy...'
+          sh 'chmod +x ./docker/deploy.sh'
+          sh './docker/deploy.sh'
         }
       }
     }
