@@ -4,7 +4,7 @@ const GlobalStyles = createGlobalStyle`
   :root{
     /* Blue 500 */
     --primary: #2196F3;
-    --primary-hover: #1976D2;
+    --primary-dark: #1976D2;
     --complementary: #f37f21;
     --triadic1: #8021f3;
     --triadic2: #f32194;
@@ -23,11 +23,11 @@ const GlobalStyles = createGlobalStyle`
     --warning: #FB8C00;
     --info: #039BE5;
 
-    --secondary-hover: #37474F;
-    --success-hover: #2E7D32;
-    --danger-hover: #C62828;
-    --warning-hover: #EF6C00;
-    --info-hover: #0277BD;
+    --secondary-dark: #37474F;
+    --success-dark: #2E7D32;
+    --danger-dark: #C62828;
+    --warning-dark: #EF6C00;
+    --info-dark: #0277BD;
 
     --shadow-color: rgba(0, 0, 0, 0.8);
   }
@@ -39,7 +39,7 @@ const GlobalStyles = createGlobalStyle`
   
   button{
     --btn-color: var(--primary);
-    --btn-color-hover: var(--primary-hover);
+    --btn-color-hover: var(--primary-dark);
     --btn-shadow-color: var(--primary);
     border: none;
     outline: none;
@@ -53,27 +53,27 @@ const GlobalStyles = createGlobalStyle`
 
     &.secondary{
       --btn-color: var(--secondary);
-      --btn-color-hover: var(--secondary-hover);
+      --btn-color-hover: var(--secondary-dark);
     }
 
     &.success{
       --btn-color: var(--success);
-      --btn-color-hover: var(--success-hover);
+      --btn-color-hover: var(--success-dark);
     }
     
     &.danger{
       --btn-color: var(--danger);
-      --btn-color-hover: var(--danger-hover);
+      --btn-color-hover: var(--danger-dark);
     }
 
     &.warning{
       --btn-color: var(--warning);
-      --btn-color-hover: var(--warning-hover);
+      --btn-color-hover: var(--warning-dark);
     }
 
     &.info{
       --btn-color: var(--info);
-      --btn-color-hover: var(--info-hover);
+      --btn-color-hover: var(--info-dark);
     }
 
     &:hover{
