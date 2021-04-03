@@ -1,11 +1,21 @@
 import React from 'react';
-import { PageProps } from 'gatsby';
+import styled from 'styled-components';
 import HelloWorld from '../components/HelloWorld';
+import ToastLauncher from '../components/ToastLauncher';
 
-export default function HomePage(props: PageProps): JSX.Element {
+const WrapperStyles = styled.div`
+  padding: 2rem;
+  display: grid;
+  grid-template-rows: auto auto;
+  grid-gap: 2rem;
+  justify-items: center;
+`;
+
+export default function HomePage(): JSX.Element {
   return (
-    <div>
+    <WrapperStyles>
       <HelloWorld />
-    </div>
+      <ToastLauncher />
+    </WrapperStyles>
   );
 }

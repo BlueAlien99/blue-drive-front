@@ -6,8 +6,10 @@ import Nav from './Nav';
 import 'normalize.css';
 import GlobalStyles from '../styles/GlobalStyles';
 import Typography from '../styles/Typography';
+import { ToastContextWrapper } from './ToastContext';
 
 const SiteStyles = styled.div`
+  position: relative;
   display: grid;
   grid-template-columns: auto 1fr;
 `;
@@ -37,11 +39,14 @@ export default function Layout({ children }: PageProps): JSX.Element {
       <Typography />
 
       <SiteStyles>
-        <SidebarStyles>
-          <Nav />
-          <Footer />
-        </SidebarStyles>
-        <PageWrapper>{children}</PageWrapper>
+        <ToastContextWrapper>
+          <SidebarStyles>
+            <Nav />
+            <Footer />
+          </SidebarStyles>
+
+          <PageWrapper>{children}</PageWrapper>
+        </ToastContextWrapper>
       </SiteStyles>
     </>
   );
