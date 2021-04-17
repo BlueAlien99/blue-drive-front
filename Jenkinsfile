@@ -39,6 +39,13 @@ pipeline {
       steps {
         script {
           echo 'Deploy...'
+          try {
+            sh 'docker container stop gatsby-serve'
+            sh 'docker container rm gatsby-serve'
+          }
+          catch(err) {
+            echo '${err}'
+          }
           sh 'chmod +x ./docker/deploy.sh'
           sh './docker/deploy.sh'
         }
