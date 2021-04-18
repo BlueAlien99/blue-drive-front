@@ -42,6 +42,7 @@ pipeline {
           try {
             sh 'docker container stop gatsby-serve'
             sh 'docker container rm gatsby-serve'
+            sh 'docker image rm gatsby:latest'
           }
           catch(err) {
             echo '${err}'
