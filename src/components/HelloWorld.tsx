@@ -20,13 +20,13 @@ const HelloWorldStyles = styled.div`
   }
 `;
 
-interface FetchState {
-  status: 'idle' | 'pending' | 'success' | 'failed';
+interface HelloFetchState {
+  status: FetchState;
   payload?: string | Record<string, unknown>;
   error?: string;
 }
 
-const defaultFetchState: FetchState = {
+const defaultFetchState: HelloFetchState = {
   status: 'idle',
 };
 

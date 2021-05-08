@@ -37,7 +37,7 @@ export default function Nav(): JSX.Element {
           <Link to="/">Home</Link>
         </li>
         <li>
-          <Link to="/page1">Page1</Link>
+          <Link to="/drive">Drive</Link>
         </li>
         <li>
           <Link to="/page2">Page2</Link>

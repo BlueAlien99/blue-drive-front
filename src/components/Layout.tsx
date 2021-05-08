@@ -25,11 +25,13 @@ const SidebarStyles = styled.div`
 `;
 
 const PageWrapper = styled.div`
+  position: relative;
   height: 100vh;
   overflow: auto;
   display: grid;
   align-items: center;
-  justify-content: center;
+  justify-items: center;
+  grid-template-columns: 1fr;
 `;
 
 export default function Layout({ children }: PageProps): JSX.Element {

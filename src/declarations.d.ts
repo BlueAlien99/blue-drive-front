@@ -6,3 +6,20 @@
 
 // And to shim assets, use (one file extension per `declare`):
 // declare module "*.png"
+
+type FetchState = 'idle' | 'pending' | 'success' | 'failed';
+
+interface DriveFile {
+  filename: string;
+  lastModified: string;
+  size: number;
+  contentType: string;
+  url: string;
+}
+
+declare namespace Intl {
+  interface DateTimeFormatOptions {
+    dateStyle?: 'full' | 'long' | 'medium' | 'short';
+    timeStyle?: 'full' | 'long' | 'medium' | 'short';
+  }
+}
