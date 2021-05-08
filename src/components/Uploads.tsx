@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useUpload } from './UploadContext';
+import { useUploadFiles } from './UploadContext';
 import { fractionToPercentage, bytesToHumanReadable } from '../utils/utils';
 
 const UploadsStyles = styled.div`
@@ -27,13 +27,13 @@ const ProgressBarStyles = styled.div<{ progress: string }>`
 `;
 
 export default function Uploads(): JSX.Element {
-  const uploadFileManager = useUpload();
+  const uploadFiles = useUploadFiles();
 
   return (
     <UploadsStyles>
       UPLOADS
       <UploadListStyles>
-        {uploadFileManager.files.map(file => (
+        {uploadFiles.map(file => (
           <UploadFileStyles key={file.id}>
             <span>📄</span>
             <UploadFileInfoStyles>

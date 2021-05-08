@@ -1,5 +1,5 @@
 import axios, { AxiosError } from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import styled from 'styled-components';
 import DriveFile from '../components/DriveFile';
 import { useToast } from '../components/ToastContext';
@@ -88,12 +88,12 @@ export default function DrivePage(): JSX.Element {
   const [files, setFiles] = useState<DriveFile[]>([]);
 
   const launchToast = useToast();
-  const fileUploadManager = useUpload();
+  const { upload, addRefreshCallback, removeRefreshCallback } = useUpload();
 
   console.log('fuck');
 
   // TODO: RxJS, with Observables and cancel
-  const fetchFiles = () => {
+  const fetchFiles = useCallback(() => {
     if (fetchState !== 'pending') {
       setFetchState('pending');
       axios
@@ -108,24 +108,26 @@ export default function DrivePage(): JSX.Element {
           launchToast('error', err.message);
         });
     }
-  };
-
-  const refresh = () => {
-    fetchFiles();
-  };
+  }, [fetchState, launchToast]);
 
   useEffect(() => {
     fetchFiles();
     setPath(['not', 'yet', 'working_path']);
+    addRefreshCallback(fetchFiles);
+
+    return () => removeRefreshCallback(fetchFiles);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      fileUploadManager.upload(e.target.files, refresh);
+      upload(e.target.files);
     }
     e.target.value = '';
   };
+
+  const deleteFileFactory = (id: string) => () =>
+    setFiles(oldFiles => oldFiles.filter(f => f.filename !== id));
 
   const isLoading = () => fetchState === 'pending';
 
@@ -152,7 +154,7 @@ export default function DrivePage(): JSX.Element {
                   <th>Actions</th>
                 </tr>
                 {files.map(f => (
-                  <DriveFile key={f.filename} file={f} refresh={refresh} />
+                  <DriveFile key={f.filename} file={f} deleteFile={deleteFileFactory(f.filename)} />
                 ))}
               </tbody>
             </FileTableStyles>

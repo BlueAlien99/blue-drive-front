@@ -24,23 +24,22 @@ const FileActionBtnStyles = styled.button`
 
 interface DriveFileProps {
   file: DriveFile;
-  refresh: () => void;
+  deleteFile: () => void;
 }
 
-export default function DriveFile({ file, refresh }: DriveFileProps): JSX.Element {
+export default function DriveFile({ file, deleteFile }: DriveFileProps): JSX.Element {
   const [deleteState, setDeleteState] = useState<FetchState>('idle');
 
   const launchToast = useToast();
 
   const handleDownload = () => window.location.assign(`/api/file?filename=${file.filename}`);
 
-  // TODO: On success, remove from state, don't fetch again
   const handleDelete = () => {
     if (deleteState !== 'pending') {
       setDeleteState('pending');
       axios
         .delete(`/api/file?filename=${file.filename}`)
-        .then(refresh)
+        .then(deleteFile)
         .catch((err: AxiosError) => {
           setDeleteState('failed');
           launchToast('error', err.message);

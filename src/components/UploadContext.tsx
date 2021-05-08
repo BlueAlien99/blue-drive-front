@@ -1,5 +1,5 @@
 import axios, { AxiosError } from 'axios';
-import React, { createContext, useMemo, useContext, useState } from 'react';
+import React, { createContext, useMemo, useContext, useState, useCallback, useEffect } from 'react';
 import { useToast } from './ToastContext';
 import { getNewUIDGenerator } from '../utils/simpleUID';
 
@@ -11,19 +11,28 @@ export interface UploadFile {
   total: number;
 }
 
-export interface FileUploadManager {
-  files: UploadFile[];
-  upload: (files: FileList, refresh: () => void) => void;
+export interface UploadManager {
+  upload: (files: FileList) => void;
+  addRefreshCallback: (cb: () => void) => void;
+  removeRefreshCallback: (cb: () => void) => void;
 }
 
-const UploadContext = createContext<FileUploadManager>({
-  files: [],
+const UploadContext = createContext<UploadManager>({
   upload: () => {
+    throw Error('UploadContext has no Provider!');
+  },
+  addRefreshCallback: () => {
+    throw Error('UploadContext has no Provider!');
+  },
+  removeRefreshCallback: () => {
     throw Error('UploadContext has no Provider!');
   },
 });
 
-export const useUpload = (): FileUploadManager => useContext(UploadContext);
+const UploadFilesContext = createContext<UploadFile[]>([]);
+
+export const useUpload = (): UploadManager => useContext(UploadContext);
+export const useUploadFiles = (): UploadFile[] => useContext(UploadFilesContext);
 
 interface UploadContextWrapperProps {
   children: JSX.Element | JSX.Element[];
@@ -31,6 +40,8 @@ interface UploadContextWrapperProps {
 
 export function UploadContextWrapper({ children }: UploadContextWrapperProps): JSX.Element {
   const [files, setFiles] = useState<UploadFile[]>([]);
+  const [refreshCallbacks, setRefreshCallbacks] = useState<Array<() => void>>([]);
+  const [needsRefreshing, setNeedsRefreshing] = useState<boolean>(false);
 
   const generateUID = useMemo(getNewUIDGenerator, []);
 
@@ -49,52 +60,78 @@ export function UploadContextWrapper({ children }: UploadContextWrapperProps): J
     });
   };
 
-  const upload = (fileList: FileList, refresh: () => void) => {
-    Array.from(fileList).forEach(file => {
-      const id = generateUID();
-      const updateFile = updateFileFactory(id);
-      const data = new FormData();
-      data.append('file', file);
+  const upload = useCallback(
+    (fileList: FileList) => {
+      Array.from(fileList).forEach(file => {
+        const id = generateUID();
+        const updateFile = updateFileFactory(id);
+        const data = new FormData();
+        data.append('file', file);
 
-      setFiles(oldFiles =>
-        oldFiles
-          .concat([
-            {
-              id,
-              name: file.name,
-              status: 'pending',
-              loaded: 0,
-              total: file.size,
-            },
-          ])
-          .sort((a, b) => b.id - a.id)
-      );
+        setFiles(oldFiles =>
+          oldFiles
+            .concat([
+              {
+                id,
+                name: file.name,
+                status: 'pending',
+                loaded: 0,
+                total: file.size,
+              },
+            ])
+            .sort((a, b) => b.id - a.id)
+        );
 
-      axios
-        .post('/api/file', data, {
-          onUploadProgress: (e: ProgressEvent) =>
-            updateFile(oldFile => ({
-              ...oldFile,
-              loaded: e.loaded,
-              total: e.total,
-            })),
-        })
-        .then(() => {
-          refresh();
-          launchToast('success', `Uploaded ${file.name}`);
-        })
-        .catch((err: AxiosError) => launchToast('error', err.message));
-    });
-  };
+        axios
+          .post('/api/file', data, {
+            onUploadProgress: (e: ProgressEvent) =>
+              updateFile(oldFile => ({
+                ...oldFile,
+                loaded: e.loaded,
+                total: e.total,
+              })),
+          })
+          .then(() => {
+            setNeedsRefreshing(true);
+            launchToast('success', `Uploaded ${file.name}`);
+          })
+          .catch((err: AxiosError) => launchToast('error', err.message));
+      });
+    },
+    [generateUID, launchToast]
+  );
 
-  const fileUploadManager = {
-    files,
-    upload,
-  };
+  useEffect(() => {
+    if (needsRefreshing) {
+      refreshCallbacks.forEach(cb => cb());
+      setNeedsRefreshing(false);
+    }
+  }, [needsRefreshing, refreshCallbacks]);
+
+  const uploadManager: UploadManager = useMemo(
+    () => ({
+      upload,
+      addRefreshCallback: cb => {
+        setRefreshCallbacks(oldCbs => [...oldCbs, cb]);
+        console.log('ADD CB ');
+      },
+      removeRefreshCallback: cb => {
+        setRefreshCallbacks(oldCbs => oldCbs.filter(oldCb => oldCb !== cb));
+        console.log('RM CB  ');
+      },
+    }),
+    [upload]
+  );
+
+  useEffect(() => {
+    console.log('CBS: ', refreshCallbacks.length);
+  }, [refreshCallbacks]);
 
   return (
     <>
-      <UploadContext.Provider value={fileUploadManager}>{children}</UploadContext.Provider>
+      <UploadContext.Provider value={uploadManager}>
+        <UploadFilesContext.Provider value={files}>{children}</UploadFilesContext.Provider>
+      </UploadContext.Provider>
     </>
   );
 }
