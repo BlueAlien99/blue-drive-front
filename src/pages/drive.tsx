@@ -4,6 +4,19 @@ import styled from 'styled-components';
 import DriveFile from '../components/DriveFile';
 import { useToast } from '../components/ToastContext';
 import Spinner from '../components/Spinner';
+import Uploads from '../components/Uploads';
+import { useUpload } from '../components/UploadContext';
+
+const WrapperStyles = styled.div`
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr auto;
+`;
+
+const DriveWrapperStyles = styled.div`
+  position: relative;
+`;
 
 const LoadingStyles = styled.div`
   position: absolute;
@@ -12,12 +25,10 @@ const LoadingStyles = styled.div`
   display: grid;
   align-items: center;
   justify-content: center;
+  z-index: 100;
 `;
 
-const WrapperStyles = styled.div`
-  position: relative;
-  width: 100%;
-  height: 100%;
+const DriveStyles = styled.div`
   padding: 2rem;
   box-sizing: border-box;
   display: grid;
@@ -37,7 +48,7 @@ const FileTableStyles = styled.table`
 
   align-self: flex-start;
   width: 100%;
-  padding: 2rem 0;
+  padding-top: 2rem;
   font-size: 1.5rem;
 
   th {
@@ -77,6 +88,9 @@ export default function DrivePage(): JSX.Element {
   const [files, setFiles] = useState<DriveFile[]>([]);
 
   const launchToast = useToast();
+  const fileUploadManager = useUpload();
+
+  console.log('fuck');
 
   // TODO: RxJS, with Observables and cancel
   const fetchFiles = () => {
@@ -106,32 +120,45 @@ export default function DrivePage(): JSX.Element {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      fileUploadManager.upload(e.target.files, refresh);
+    }
+    e.target.value = '';
+  };
+
   const isLoading = () => fetchState === 'pending';
 
   // TODO: LoadingStyles to Layout?
   return (
     <>
-      {isLoading() && (
-        <LoadingStyles>
-          <Spinner />
-        </LoadingStyles>
-      )}
-      <WrapperStyles className={isLoading() ? 'loading' : ''}>
-        <PathStyles>{strArrToPath(path)}</PathStyles>
-        <FileTableStyles cellSpacing="0">
-          <tbody>
-            <tr>
-              <th aria-label="Directory">{}</th>
-              <th className="left">Name</th>
-              <th className="right">Size</th>
-              <th>Modified</th>
-              <th>Actions</th>
-            </tr>
-            {files.map(f => (
-              <DriveFile key={f.filename} file={f} refresh={refresh} />
-            ))}
-          </tbody>
-        </FileTableStyles>
+      <WrapperStyles>
+        <DriveWrapperStyles>
+          {isLoading() && (
+            <LoadingStyles>
+              <Spinner />
+            </LoadingStyles>
+          )}
+          <DriveStyles className={isLoading() ? 'loading' : ''}>
+            <input type="file" multiple onChange={handleUpload} />
+            <PathStyles>{strArrToPath(path)}</PathStyles>
+            <FileTableStyles cellSpacing="0">
+              <tbody>
+                <tr>
+                  <th aria-label="Directory">{}</th>
+                  <th className="left">Name</th>
+                  <th className="right">Size</th>
+                  <th>Modified</th>
+                  <th>Actions</th>
+                </tr>
+                {files.map(f => (
+                  <DriveFile key={f.filename} file={f} refresh={refresh} />
+                ))}
+              </tbody>
+            </FileTableStyles>
+          </DriveStyles>
+        </DriveWrapperStyles>
+        <Uploads />
       </WrapperStyles>
     </>
   );

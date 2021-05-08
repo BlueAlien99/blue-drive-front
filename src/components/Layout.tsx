@@ -7,6 +7,7 @@ import 'normalize.css';
 import GlobalStyles from '../styles/GlobalStyles';
 import Typography from '../styles/Typography';
 import { ToastContextWrapper } from './ToastContext';
+import { UploadContextWrapper } from './UploadContext';
 
 const SiteStyles = styled.div`
   position: relative;
@@ -42,12 +43,14 @@ export default function Layout({ children }: PageProps): JSX.Element {
 
       <SiteStyles>
         <ToastContextWrapper>
-          <SidebarStyles>
-            <Nav />
-            <Footer />
-          </SidebarStyles>
+          <UploadContextWrapper>
+            <SidebarStyles>
+              <Nav />
+              <Footer />
+            </SidebarStyles>
 
-          <PageWrapper>{children}</PageWrapper>
+            <PageWrapper>{children}</PageWrapper>
+          </UploadContextWrapper>
         </ToastContextWrapper>
       </SiteStyles>
     </>

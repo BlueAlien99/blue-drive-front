@@ -52,7 +52,8 @@ export default function DriveFile({ file, refresh }: DriveFileProps): JSX.Elemen
 
   return (
     <FileStyles className={isBeingDeleted() ? 'deleting' : ''}>
-      <td>📁</td>
+      {/* <td>📁</td> */}
+      <td>📄</td>
       <td className="left">{file.filename}</td>
       <td className="right">{bytesToHumanReadable(file.size)}</td>
       <td>{dateToHumanReadable(file.lastModified)}</td>

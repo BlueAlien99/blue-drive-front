@@ -23,3 +23,5 @@ export const dateToHumanReadable = (date: string): string => {
 
   return new Date(date).toLocaleString(undefined, options);
 };
+
+export const fractionToPercentage = (num: number): string => `${Math.round(num * 100)}%`;
