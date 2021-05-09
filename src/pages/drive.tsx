@@ -9,13 +9,15 @@ import { useUpload } from '../components/UploadContext';
 
 const WrapperStyles = styled.div`
   width: 100%;
-  height: 100%;
+  height: 100vh;
   display: grid;
   grid-template-columns: 1fr auto;
 `;
 
 const DriveWrapperStyles = styled.div`
   position: relative;
+  height: 100%;
+  overflow-y: auto;
 `;
 
 const LoadingStyles = styled.div`
@@ -89,8 +91,6 @@ export default function DrivePage(): JSX.Element {
 
   const launchToast = useToast();
   const { upload, addRefreshCallback, removeRefreshCallback } = useUpload();
-
-  console.log('fuck');
 
   // TODO: RxJS, with Observables and cancel
   const fetchFiles = useCallback(() => {

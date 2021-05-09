@@ -6,6 +6,7 @@ import { getNewUIDGenerator } from '../utils/simpleUID';
 export interface UploadFile {
   id: number;
   name: string;
+  path: string;
   status: FetchState;
   loaded: number;
   total: number;
@@ -74,6 +75,7 @@ export function UploadContextWrapper({ children }: UploadContextWrapperProps): J
               {
                 id,
                 name: file.name,
+                path,
                 status: 'pending',
                 loaded: 0,
                 total: file.size,
