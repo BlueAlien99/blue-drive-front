@@ -34,6 +34,7 @@ const UploadFileStyles = styled.div`
 
 const UploadFileInfoStyles = styled.div`
   grid-area: info;
+  margin-right: 1.5rem;
   display: grid;
   grid-template-rows: repeat(4, auto);
 

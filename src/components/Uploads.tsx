@@ -4,6 +4,7 @@ import { useUploadFiles } from './UploadContext';
 import UploadFileTile from './UploadFileTile';
 
 const UploadsStyles = styled.div`
+  max-width: 600px;
   height: 100vh;
   background: var(--primary-dark);
   display: grid;
@@ -28,6 +29,10 @@ const UploadListStyles = styled.div`
 
 export default function Uploads(): JSX.Element {
   const uploadFiles = useUploadFiles();
+
+  if (uploadFiles.length === 0) {
+    return <></>;
+  }
 
   return (
     <UploadsStyles>
