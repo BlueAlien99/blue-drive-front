@@ -1,5 +1,6 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
+import { ToastType } from './ToastContext';
 
 const toastSlideIn = keyframes`
   0%{
@@ -8,7 +9,7 @@ const toastSlideIn = keyframes`
   }
 `;
 
-const ToastStyles = styled.div<{ hidingDuration: string }>`
+const ToastStyles = styled.div<{ slideInDuration: string; hidingDuration: string }>`
   --bg-color: var(--info);
   --shadow-color: var(--info-dark);
 
@@ -24,7 +25,7 @@ const ToastStyles = styled.div<{ hidingDuration: string }>`
   filter: contrast(0.8);
   pointer-events: auto;
   cursor: default;
-  animation: ${toastSlideIn} 0.3s cubic-bezier(0, 1, 0.7, 1.3);
+  animation: ${toastSlideIn} ${props => props.slideInDuration} cubic-bezier(0, 1, 0.7, 1.3);
   transform: translateY(100%);
   transition: opacity ${props => props.hidingDuration};
 
@@ -48,30 +49,45 @@ const ToastStyles = styled.div<{ hidingDuration: string }>`
   }
 `;
 
-export type ToastType = 'error' | 'warning' | 'success' | 'info';
-
 export interface ToastProps {
-  id: number;
   type: ToastType;
   msg: string;
   pop: () => void;
+  popNow: boolean;
 }
 
-const DEFAULT_TIMEOUT = 4000;
+const SLIDE_IN_DURATION = 300;
 const HIDING_DURATION = 1000;
 
-export default function Toast({ type, msg, pop }: ToastProps): JSX.Element {
+const DEFAULT_TIMEOUT = 4000;
+const SHORT_TIMEOUT = SLIDE_IN_DURATION + 200;
+
+export default function Toast({ type, msg, pop, popNow }: ToastProps): JSX.Element {
   const toast = useRef<HTMLDivElement>(null);
 
+  const cssSlideInDuration = `${SLIDE_IN_DURATION / 1000}s`;
   const cssHidingDuration = `${HIDING_DURATION / 1000}s`;
 
-  setTimeout(() => {
-    toast.current?.classList.add('hiding');
-    setTimeout(pop, HIDING_DURATION);
-  }, DEFAULT_TIMEOUT);
+  useEffect(() => {
+    const timeout = setTimeout(
+      () => {
+        toast.current?.classList.add('hiding');
+        setTimeout(pop, HIDING_DURATION);
+      },
+      popNow ? SHORT_TIMEOUT : DEFAULT_TIMEOUT
+    );
+
+    return () => clearTimeout(timeout);
+  }, [pop, popNow]);
 
   return (
-    <ToastStyles hidingDuration={cssHidingDuration} className={type} ref={toast} onClick={pop}>
+    <ToastStyles
+      slideInDuration={cssSlideInDuration}
+      hidingDuration={cssHidingDuration}
+      className={type}
+      ref={toast}
+      onClick={pop}
+    >
       {msg}
     </ToastStyles>
   );

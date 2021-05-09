@@ -1,14 +1,7 @@
-import React, { createContext, useCallback, useContext, useState } from 'react';
+import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import Toast, { ToastType, ToastProps } from './Toast';
-
-type ToastLauncher = (type: ToastType, msg: string) => void;
-
-const ToastContext = createContext<ToastLauncher>(() => {
-  throw Error('ToastContext has no Provider!');
-});
-
-export const useToast = (): ToastLauncher => useContext(ToastContext);
+import { getNewUIDGenerator } from '../utils/simpleUID';
+import Toast from './Toast';
 
 const ToastMountPointStyles = styled.div`
   width: 100%;
@@ -21,13 +14,31 @@ const ToastMountPointStyles = styled.div`
   pointer-events: none;
 `;
 
+export type ToastType = 'error' | 'warning' | 'success' | 'info';
+
+export interface Toast {
+  id: number;
+  type: ToastType;
+  msg: string;
+  pop: () => void;
+}
+
+type ToastLauncher = (type: ToastType, msg: string) => void;
+
+const ToastContext = createContext<ToastLauncher>(() => {
+  throw Error('ToastContext has no Provider!');
+});
+
+export const useToast = (): ToastLauncher => useContext(ToastContext);
+
 type ToastContextWrapperProps = {
   children: JSX.Element | JSX.Element[];
 };
 
 export function ToastContextWrapper({ children }: ToastContextWrapperProps): JSX.Element {
-  const [toasts, setToasts] = useState<ToastProps[]>([]);
-  const [, setCounter] = useState(0);
+  const [toasts, setToasts] = useState<Toast[]>([]);
+
+  const generateUID = useMemo(getNewUIDGenerator, []);
 
   const popFactory = useCallback(
     id => () => setToasts(prevToasts => prevToasts.filter(t => t.id !== id)),
@@ -36,19 +47,21 @@ export function ToastContextWrapper({ children }: ToastContextWrapperProps): JSX
 
   const launch = useCallback<ToastLauncher>(
     (type, msg) => {
-      setCounter(id => {
-        const newToast = { id, type, msg, pop: popFactory(id) };
-        setToasts(prevToasts => [...prevToasts, newToast]);
-        return id + 1;
-      });
+      const id = generateUID();
+      const pop = popFactory(id);
+      const newToast: Toast = { id, type, msg, pop };
+      setToasts(prevToasts => [...prevToasts, newToast]);
+      return id + 1;
     },
-    [popFactory]
+    [popFactory, generateUID]
   );
 
   let currentToast = null;
   if (toasts.length) {
     const t = toasts[0];
-    currentToast = <Toast key={t.id} id={t.id} type={t.type} msg={t.msg} pop={t.pop} />;
+    currentToast = (
+      <Toast key={t.id} type={t.type} msg={t.msg} pop={t.pop} popNow={toasts.length > 1} />
+    );
   }
 
   return (

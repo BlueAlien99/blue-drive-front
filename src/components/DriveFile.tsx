@@ -32,13 +32,13 @@ export default function DriveFile({ file, deleteFile }: DriveFileProps): JSX.Ele
 
   const launchToast = useToast();
 
-  const handleDownload = () => window.location.assign(`/api/file?filename=${file.filename}`);
+  const handleDownload = () => window.location.assign(`/api/file/${file.id}`);
 
   const handleDelete = () => {
     if (deleteState !== 'pending') {
       setDeleteState('pending');
       axios
-        .delete(`/api/file?filename=${file.filename}`)
+        .delete(`/api/file/${file.id}`)
         .then(deleteFile)
         .catch((err: AxiosError) => {
           setDeleteState('failed');

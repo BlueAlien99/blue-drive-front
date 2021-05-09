@@ -12,7 +12,7 @@ export interface UploadFile {
 }
 
 export interface UploadManager {
-  upload: (files: FileList) => void;
+  upload: (files: FileList, path: string) => void;
   addRefreshCallback: (cb: () => void) => void;
   removeRefreshCallback: (cb: () => void) => void;
 }
@@ -61,7 +61,7 @@ export function UploadContextWrapper({ children }: UploadContextWrapperProps): J
   };
 
   const upload = useCallback(
-    (fileList: FileList) => {
+    (fileList: FileList, path: string) => {
       Array.from(fileList).forEach(file => {
         const id = generateUID();
         const updateFile = updateFileFactory(id);
@@ -83,7 +83,7 @@ export function UploadContextWrapper({ children }: UploadContextWrapperProps): J
         );
 
         axios
-          .post('/api/file', data, {
+          .post(`/api/file?filepath=${path}/${file.name}`, data, {
             onUploadProgress: (e: ProgressEvent) =>
               updateFile(oldFile => ({
                 ...oldFile,
@@ -92,10 +92,20 @@ export function UploadContextWrapper({ children }: UploadContextWrapperProps): J
               })),
           })
           .then(() => {
+            updateFile(oldFile => ({
+              ...oldFile,
+              status: 'success',
+            }));
             setNeedsRefreshing(true);
             launchToast('success', `Uploaded ${file.name}`);
           })
-          .catch((err: AxiosError) => launchToast('error', err.message));
+          .catch((err: AxiosError) => {
+            updateFile(oldFile => ({
+              ...oldFile,
+              status: 'failed',
+            }));
+            launchToast('error', err.message);
+          });
       });
     },
     [generateUID, launchToast]

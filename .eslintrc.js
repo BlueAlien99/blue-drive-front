@@ -6,6 +6,10 @@ const importResolverSettings = {
   },
 };
 
+const eslintRules = {
+  'no-console': 'warn',
+};
+
 const prettierRules = {
   'prettier/prettier': [
     'error',
@@ -21,7 +25,7 @@ const prettierRules = {
 
 module.exports = {
   extends: ['wesbos'],
-  rules: { ...prettierRules },
+  rules: { ...eslintRules, ...prettierRules },
   settings: { ...importResolverSettings },
   overrides: [
     {
@@ -41,6 +45,7 @@ module.exports = {
         'no-use-before-define': 'off',
         '@typescript-eslint/no-use-before-define': ['error'],
         'react/jsx-filename-extension': [1, { extensions: ['.ts', '.tsx'] }],
+        ...eslintRules,
         ...prettierRules,
       },
       settings: { ...importResolverSettings },

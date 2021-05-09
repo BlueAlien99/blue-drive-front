@@ -10,11 +10,12 @@
 type FetchState = 'idle' | 'pending' | 'success' | 'failed';
 
 interface DriveFile {
+  id: string;
   filename: string;
+  directoryPath: string;
   lastModified: string;
   size: number;
   contentType: string;
-  url: string;
 }
 
 declare namespace Intl {

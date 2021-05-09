@@ -97,8 +97,8 @@ export default function DrivePage(): JSX.Element {
     if (fetchState !== 'pending') {
       setFetchState('pending');
       axios
-        .get<DriveFile[]>(`/api/file/listdir`)
-        .then(res => res.data)
+        .get<DriveFile[]>(`/api/file/list-dir?directoryPath=${strArrToPath(path)}`)
+        .then(res => res.data.filter(d => d))
         .then(data => {
           setFiles(data);
           setFetchState('success');
@@ -108,26 +108,30 @@ export default function DrivePage(): JSX.Element {
           launchToast('error', err.message);
         });
     }
-  }, [fetchState, launchToast]);
+  }, [fetchState, launchToast, path]);
+
+  // temp, just for testing / demo
+  useEffect(() => {
+    setPath(['not', 'yet', 'working_path']);
+  }, []);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(fetchFiles, [path]);
 
   useEffect(() => {
-    fetchFiles();
-    setPath(['not', 'yet', 'working_path']);
     addRefreshCallback(fetchFiles);
-
     return () => removeRefreshCallback(fetchFiles);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [fetchFiles, addRefreshCallback, removeRefreshCallback]);
 
   const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      upload(e.target.files);
+      upload(e.target.files, strArrToPath(path));
     }
     e.target.value = '';
   };
 
   const deleteFileFactory = (id: string) => () =>
-    setFiles(oldFiles => oldFiles.filter(f => f.filename !== id));
+    setFiles(oldFiles => oldFiles.filter(f => f.id !== id));
 
   const isLoading = () => fetchState === 'pending';
 
@@ -154,7 +158,7 @@ export default function DrivePage(): JSX.Element {
                   <th>Actions</th>
                 </tr>
                 {files.map(f => (
-                  <DriveFile key={f.filename} file={f} deleteFile={deleteFileFactory(f.filename)} />
+                  <DriveFile key={f.id} file={f} deleteFile={deleteFileFactory(f.id)} />
                 ))}
               </tbody>
             </FileTableStyles>
