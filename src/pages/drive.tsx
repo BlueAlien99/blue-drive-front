@@ -3,9 +3,9 @@ import React, { useEffect, useState, useCallback } from 'react';
 import styled from 'styled-components';
 import DriveFile from '../components/DriveFile';
 import { useToast } from '../components/ToastContext';
-import Spinner from '../components/Spinner';
 import Uploads from '../components/Uploads';
 import { useUpload } from '../components/UploadContext';
+import LoadingBlur from '../components/LoadingBlur';
 
 const WrapperStyles = styled.div`
   width: 100%;
@@ -15,30 +15,14 @@ const WrapperStyles = styled.div`
 `;
 
 const DriveWrapperStyles = styled.div`
-  position: relative;
-  height: 100%;
   overflow-y: auto;
-`;
-
-const LoadingStyles = styled.div`
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  display: grid;
-  align-items: center;
-  justify-content: center;
-  z-index: 100;
 `;
 
 const DriveStyles = styled.div`
   padding: 2rem;
   box-sizing: border-box;
   display: grid;
-  grid-template-rows: auto 1fr;
-
-  &.loading {
-    filter: blur(4px);
-  }
+  grid-template-rows: auto auto 1fr;
 `;
 
 const PathStyles = styled.div`
@@ -133,19 +117,11 @@ export default function DrivePage(): JSX.Element {
   const deleteFileFactory = (id: string) => () =>
     setFiles(oldFiles => oldFiles.filter(f => f.id !== id));
 
-  const isLoading = () => fetchState === 'pending';
-
-  // TODO: LoadingStyles to Layout?
   return (
-    <>
-      <WrapperStyles>
-        <DriveWrapperStyles>
-          {isLoading() && (
-            <LoadingStyles>
-              <Spinner />
-            </LoadingStyles>
-          )}
-          <DriveStyles className={isLoading() ? 'loading' : ''}>
+    <WrapperStyles>
+      <DriveWrapperStyles>
+        <LoadingBlur fetchState={fetchState}>
+          <DriveStyles>
             <input type="file" multiple onChange={handleUpload} />
             <PathStyles>{strArrToPath(path)}</PathStyles>
             <FileTableStyles cellSpacing="0">
@@ -163,9 +139,9 @@ export default function DrivePage(): JSX.Element {
               </tbody>
             </FileTableStyles>
           </DriveStyles>
-        </DriveWrapperStyles>
-        <Uploads />
-      </WrapperStyles>
-    </>
+        </LoadingBlur>
+      </DriveWrapperStyles>
+      <Uploads />
+    </WrapperStyles>
   );
 }

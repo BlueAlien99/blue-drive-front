@@ -8,8 +8,6 @@ const ToastLauncherStyles = styled.div`
   gap: 2rem;
   flex-wrap: wrap;
   justify-content: center;
-  background-color: var(--darker);
-  box-shadow: 4px 4px 16px var(--shadow-color);
 
   button {
     min-width: 96px;
@@ -19,10 +17,8 @@ const ToastLauncherStyles = styled.div`
 export default function ToastLauncher(): JSX.Element {
   const launchToast = useToast();
 
-  console.log('>>>>> rerender  ToastLauncher');
-
   return (
-    <ToastLauncherStyles>
+    <ToastLauncherStyles className="card">
       <button
         type="button"
         className="success"

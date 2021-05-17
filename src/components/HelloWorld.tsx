@@ -4,15 +4,12 @@ import styled from 'styled-components';
 import Spinner from './Spinner';
 
 const HelloWorldStyles = styled.div`
-  min-width: 256px;
-  min-height: 256px;
-  padding: 4rem;
+  width: 256px;
+  height: 256px;
   display: grid;
   grid-template-rows: auto 1fr auto;
   align-items: center;
   justify-items: center;
-  background-color: var(--darker);
-  box-shadow: 4px 4px 16px var(--shadow-color);
 
   p {
     margin: 0;
@@ -49,7 +46,7 @@ export default function HelloWorld(): JSX.Element {
   useEffect(fetchData, []);
 
   return (
-    <HelloWorldStyles>
+    <HelloWorldStyles className="card">
       <p>Backend says:</p>
       <>
         {showSpinner && <Spinner />}

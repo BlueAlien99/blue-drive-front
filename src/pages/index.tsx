@@ -7,7 +7,6 @@ const WrapperStyles = styled.div`
   padding: 2rem;
   display: grid;
   grid-template-rows: auto auto;
-  grid-gap: 2rem;
   justify-items: center;
 `;
 

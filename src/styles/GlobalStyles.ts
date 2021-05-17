@@ -89,6 +89,14 @@ const GlobalStyles = createGlobalStyle`
       filter: brightness(0.6) contrast(0.8);
     }
   }
+
+  .card{
+    margin: 2rem;
+    padding: 4rem;
+    background-color: var(--darker);
+    box-shadow: 4px 4px 16px var(--shadow-color);
+    border-radius: 6px;
+  }
 `;
 
 export default GlobalStyles;

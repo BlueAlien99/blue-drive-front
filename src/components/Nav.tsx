@@ -43,7 +43,10 @@ export default function Nav(): JSX.Element {
           <Link to="/page2">Page2</Link>
         </li>
         <li>
-          <Link to="/page3">Page3</Link>
+          <Link to="/login">Login</Link>
+        </li>
+        <li>
+          <Link to="/register">Register</Link>
         </li>
       </ul>
     </NavStyles>
