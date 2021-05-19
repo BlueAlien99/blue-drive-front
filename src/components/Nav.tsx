@@ -39,15 +39,6 @@ export default function Nav(): JSX.Element {
         <li>
           <Link to="/drive">Drive</Link>
         </li>
-        <li>
-          <Link to="/page2">Page2</Link>
-        </li>
-        <li>
-          <Link to="/login">Login</Link>
-        </li>
-        <li>
-          <Link to="/register">Register</Link>
-        </li>
       </ul>
     </NavStyles>
   );

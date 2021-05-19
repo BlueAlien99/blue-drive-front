@@ -5,6 +5,7 @@ const AuthStyles = styled.div`
   margin: 4rem;
   display: grid;
   grid-template-rows: auto 1fr auto;
+  grid-auto-rows: auto;
   justify-items: center;
 
   header {

@@ -1,6 +1,7 @@
 import axios, { AxiosError } from 'axios';
 import { Link, navigate } from 'gatsby';
 import React, { useState } from 'react';
+import styled from 'styled-components';
 import { useAuth } from '../components/AuthContext';
 import LoadingBlur from '../components/LoadingBlur';
 import TextInput from '../components/TextInput';
@@ -8,6 +9,11 @@ import { useToast } from '../components/ToastContext';
 import useForm from '../hooks/useForm';
 import AuthStyles from '../styles/AuthStyles';
 import FormStyles from '../styles/FormStyles';
+
+const DebugLinkStyles = styled.div`
+  justify-self: end;
+  font-size: 1.5rem;
+`;
 
 interface LoginResponse {
   authenticationToken: string;
@@ -67,6 +73,9 @@ export default function LoginPage(): JSX.Element {
           <footer>
             Need an account? <Link to="/register">Register</Link>
           </footer>
+          <DebugLinkStyles>
+            <Link to="/">Debug ➡️</Link>
+          </DebugLinkStyles>
         </AuthStyles>
       </LoadingBlur>
     </div>

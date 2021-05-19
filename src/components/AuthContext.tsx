@@ -57,6 +57,17 @@ export function AuthContextWrapper({ children }: AuthContextWrapperProps): JSX.E
     launchToast('info', 'Logout successful!');
   }, [launchToast]);
 
+  useEffect(() => {
+    const credStr = sessionStorage.getItem('credentials');
+    if (credStr) {
+      setCredentials(JSON.parse(credStr));
+    }
+  }, []);
+
+  useEffect(() => sessionStorage.setItem('credentials', JSON.stringify(credentials)), [
+    credentials,
+  ]);
+
   const authService: AuthService = useMemo(
     () => ({
       ...credentials,
