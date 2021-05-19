@@ -1,30 +1,47 @@
-import { PageProps, Link } from 'gatsby';
-import React, { useEffect, useState } from 'react';
+import axios, { AxiosError } from 'axios';
+import { Link, navigate } from 'gatsby';
+import React, { useState } from 'react';
 import LoadingBlur from '../components/LoadingBlur';
 import TextInput from '../components/TextInput';
+import { useToast } from '../components/ToastContext';
 import useForm from '../hooks/useForm';
 import AuthStyles from '../styles/AuthStyles';
 import FormStyles from '../styles/FormStyles';
 
-export default function RegisterPage({ location }: PageProps): JSX.Element {
-  const [fetchState, setFetchState] = useState<FetchState>('pending');
+export default function RegisterPage(): JSX.Element {
+  const [fetchState, setFetchState] = useState<FetchState>('idle');
 
-  const { inputs, handleChange, resetForm } = useForm({
+  const launchToast = useToast();
+
+  const { inputs, handleChange } = useForm({
     email: '',
     username: '',
     password: '',
   });
 
-  useEffect(() => {
-    setTimeout(() => setFetchState('idle'), 1000);
-  }, []);
+  const handleSubmit = () => {
+    if (fetchState !== 'pending') {
+      setFetchState('pending');
+      axios
+        .post('/api/auth/signup', inputs)
+        .then(() => {
+          launchToast('success', 'Account created! You can now log in!');
+          // eslint-disable-next-line no-void
+          void navigate('/login');
+        })
+        .catch((err: AxiosError) => {
+          launchToast('error', err.response ? err.response.data : err.message);
+          setFetchState('failed');
+        });
+    }
+  };
 
   return (
     <div>
       <LoadingBlur fetchState={fetchState}>
         <AuthStyles className="card">
           <header>Create an account</header>
-          <FormStyles>
+          <FormStyles onSubmit={handleSubmit}>
             <TextInput type="email" name="email" value={inputs.email} onChange={handleChange} />
             <TextInput
               type="text"

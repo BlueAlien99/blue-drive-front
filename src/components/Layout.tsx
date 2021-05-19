@@ -8,6 +8,7 @@ import GlobalStyles from '../styles/GlobalStyles';
 import Typography from '../styles/Typography';
 import { ToastContextWrapper } from './ToastContext';
 import { UploadContextWrapper } from './UploadContext';
+import { AuthContextWrapper } from './AuthContext';
 
 const SiteStyles = styled.div`
   position: relative;
@@ -43,14 +44,16 @@ export default function Layout({ children }: PageProps): JSX.Element {
 
       <SiteStyles>
         <ToastContextWrapper>
-          <UploadContextWrapper>
-            <SidebarStyles>
-              <Nav />
-              <Footer />
-            </SidebarStyles>
+          <AuthContextWrapper>
+            <UploadContextWrapper>
+              <SidebarStyles>
+                <Nav />
+                <Footer />
+              </SidebarStyles>
 
-            <PageWrapper>{children}</PageWrapper>
-          </UploadContextWrapper>
+              <PageWrapper>{children}</PageWrapper>
+            </UploadContextWrapper>
+          </AuthContextWrapper>
         </ToastContextWrapper>
       </SiteStyles>
     </>
