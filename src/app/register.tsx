@@ -26,8 +26,7 @@ export default function RegisterPage(): JSX.Element {
         .post('/api/auth/signup', inputs)
         .then(() => {
           launchToast('success', 'Account created! You can now log in!');
-          // eslint-disable-next-line no-void
-          void navigate('/login');
+          void navigate('/app/login');
         })
         .catch((err: AxiosError) => {
           launchToast('error', err.response ? err.response.data : err.message);
@@ -58,7 +57,7 @@ export default function RegisterPage(): JSX.Element {
             <button type="submit">Sign Up</button>
           </FormStyles>
           <footer>
-            <Link to="/login">Already have an account?</Link>
+            <Link to="/app/login">Already have an account?</Link>
           </footer>
         </AuthStyles>
       </LoadingBlur>

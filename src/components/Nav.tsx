@@ -37,7 +37,7 @@ export default function Nav(): JSX.Element {
           <Link to="/">Home</Link>
         </li>
         <li>
-          <Link to="/drive">Drive</Link>
+          <Link to="/app/drive">Drive</Link>
         </li>
       </ul>
     </NavStyles>

@@ -8,6 +8,7 @@ const importResolverSettings = {
 
 const eslintRules = {
   'no-console': 'warn',
+  'no-void': 'off',
 };
 
 const prettierRules = {

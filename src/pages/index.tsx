@@ -19,7 +19,7 @@ export default function HomePage(): JSX.Element {
     <WrapperStyles>
       <HelloWorld />
       <ToastLauncher />
-      {authService.authenticated || <Link to="/login">Login screen ➡️</Link>}
+      {authService.authenticated || <Link to="/app/login">Login screen ➡️</Link>}
     </WrapperStyles>
   );
 }

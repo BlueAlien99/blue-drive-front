@@ -1,5 +1,5 @@
 import axios, { AxiosError } from 'axios';
-import { Link, navigate } from 'gatsby';
+import { Link } from 'gatsby';
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useAuth } from '../components/AuthContext';
@@ -37,11 +37,9 @@ export default function LoginPage(): JSX.Element {
       setFetchState('pending');
       axios
         .post<LoginResponse>('/api/auth/login', inputs)
-        .then(({ data: { authenticationToken, username } }) => {
-          authService.login(username, authenticationToken);
-          // eslint-disable-next-line no-void
-          void navigate('/drive');
-        })
+        .then(({ data: { username, authenticationToken } }) =>
+          authService.login(username, authenticationToken)
+        )
         .catch((err: AxiosError) => {
           launchToast('error', err.response ? err.response.data : err.message);
           resetForm();
@@ -71,7 +69,7 @@ export default function LoginPage(): JSX.Element {
             <button type="submit">Login</button>
           </FormStyles>
           <footer>
-            Need an account? <Link to="/register">Register</Link>
+            Need an account? <Link to="/app/register">Register</Link>
           </footer>
           <DebugLinkStyles>
             <Link to="/">Debug ➡️</Link>
