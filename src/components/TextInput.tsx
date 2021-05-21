@@ -36,14 +36,13 @@ interface TextInputProps {
   name: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  required?: boolean;
 }
 
-export default function TextInput({ type, name, value, onChange, required = false }: TextInputProps): JSX.Element {
+export default function TextInput({ type, name, value, onChange }: TextInputProps): JSX.Element {
   return (
     <div>
       <LabelStyles htmlFor={name}>{name.toUpperCase()}</LabelStyles>
-      <InputStyles type={type} name={name} value={value} onChange={onChange} required={required} />
+      <InputStyles type={type} name={name} value={value} onChange={onChange} required />
     </div>
   );
 }

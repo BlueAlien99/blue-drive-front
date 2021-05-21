@@ -59,14 +59,12 @@ export default function LoginPage(): JSX.Element {
               name="username"
               value={inputs.username}
               onChange={handleChange}
-              required={true}
             />
             <TextInput
               type="password"
               name="password"
               value={inputs.password}
               onChange={handleChange}
-              required={true}
             />
             <button type="submit">Login</button>
           </FormStyles>

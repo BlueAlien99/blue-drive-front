@@ -46,21 +46,18 @@ export default function RegisterPage(): JSX.Element {
               name="email" 
               value={inputs.email} 
               onChange={handleChange}
-              required={true}
             />
             <TextInput
               type="text"
               name="username"
               value={inputs.username}
               onChange={handleChange}
-              required={true}
             />
             <TextInput
               type="password"
               name="password"
               value={inputs.password}
               onChange={handleChange}
-              required={true}
             />
             <button type="submit">Sign Up</button>
           </FormStyles>
