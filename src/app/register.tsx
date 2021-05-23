@@ -41,12 +41,7 @@ export default function RegisterPage(): JSX.Element {
         <AuthStyles className="card">
           <header>Create an account</header>
           <FormStyles onSubmit={handleSubmit}>
-            <TextInput 
-              type="email" 
-              name="email" 
-              value={inputs.email} 
-              onChange={handleChange}
-            />
+            <TextInput type="email" name="email" value={inputs.email} onChange={handleChange} />
             <TextInput
               type="text"
               name="username"

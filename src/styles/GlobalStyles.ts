@@ -30,6 +30,8 @@ const GlobalStyles = createGlobalStyle`
     --info-dark: #0277BD;
 
     --shadow-color: rgba(0, 0, 0, 0.8);
+
+    --triadic1-hue: #8021f355;
   }
 
   html{
