@@ -2,9 +2,11 @@ const scanner = require('sonarqube-scanner');
 
 scanner(
   {
-    serverUrl: 'http://172.17.0.7:9000', // temporarily via ip adress of sonarqube docker container
+    serverUrl: 'http://sonarqube:9000',
     options: {
       'sonar.projectName': 'blue-drive-front',
+      'sonar.projectKey': 'blue-drive-front',
+      'sonar.sourceEncoding': 'UTF-8',
       'sonar.sources': './src',
     },
   },

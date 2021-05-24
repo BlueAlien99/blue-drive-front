@@ -34,6 +34,19 @@ pipeline {
       }
     }
 
+    stage('SonarQube analysis') {
+      agent {
+        docker { 
+          image 'node:14'
+          args '--network ci_mynetwork'
+          reuseNode true
+        }
+      }
+      steps {
+        sh 'node sonarqube-scanner.js'
+      }
+    }
+
     stage('Deploy') {
       agent any
       steps {
