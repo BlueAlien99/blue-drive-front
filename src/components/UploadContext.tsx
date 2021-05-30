@@ -94,7 +94,7 @@ export function UploadContextWrapper({ children }: UploadContextWrapperProps): J
         );
 
         axios
-          .post(`/api/file?filepath=${path}/${file.name}`, data, {
+          .post(`/api/file?path=${path}/${file.name}`, data, {
             onUploadProgress: (e: ProgressEvent) =>
               updateFile(oldFile => ({
                 ...oldFile,

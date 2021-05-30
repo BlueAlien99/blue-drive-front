@@ -24,7 +24,7 @@ export default function DriveDirectory({
     if (deleteState !== 'pending') {
       setDeleteState('pending');
       axios
-        .delete(`/api/file/${id}`)
+        .delete(`/api/directory/${id}`)
         .then(deleteDirectory)
         .catch((err: AxiosError) => {
           setDeleteState('failed');
@@ -36,7 +36,9 @@ export default function DriveDirectory({
 
   const isBeingDeleted = () => deleteState === 'pending';
 
-  const handleClick = () => (dirname === '..' ? goToParentDir() : goToDir(dirname));
+  const isParent = dirname === '..';
+
+  const handleClick = () => (isParent ? goToParentDir() : goToDir(dirname));
 
   return (
     <DriveElementStyles
@@ -50,9 +52,9 @@ export default function DriveDirectory({
       <td>
         <DriveElementActionBtnStyles
           type="button"
-          disabled={isBeingDeleted()}
+          className={`danger ${isParent ? 'hidden' : ''}`}
+          disabled={isBeingDeleted() || isParent}
           onClick={handleDelete}
-          className="danger"
         >
           ♻️
         </DriveElementActionBtnStyles>

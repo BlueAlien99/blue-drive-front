@@ -20,4 +20,8 @@ export const DriveElementActionBtnStyles = styled.button`
 
   width: var(--emoji-clearance);
   margin: 0 0.5rem;
+
+  &.hidden {
+    visibility: hidden;
+  }
 `;

@@ -121,7 +121,6 @@ export default function DrivePage(): JSX.Element {
   const [currentFiles, setCurrentFiles] = useState<DriveElement[]>([]);
 
   const fileInput = useRef<HTMLInputElement>(null);
-  const [dirNameInput, setDirNameInput] = useState('');
 
   const launchToast = useToast();
   const { upload, addRefreshCallback, removeRefreshCallback } = useUpload();
@@ -131,7 +130,7 @@ export default function DrivePage(): JSX.Element {
     if (fetchState !== 'pending') {
       setFetchState('pending');
       axios
-        .get<DriveElement[]>(`/api/file/list-dir?directoryPath=/`)
+        .get<DriveElement[]>(`/api/directory?path=/`)
         .then(res =>
           res.data
             .filter(d => d)
@@ -189,7 +188,7 @@ export default function DrivePage(): JSX.Element {
 
   const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      upload(e.target.files, strArrToPath(path));
+      upload(e.target.files, path.length ? strArrToPath(path) : '');
     }
     e.target.value = '';
   };
@@ -200,6 +199,38 @@ export default function DrivePage(): JSX.Element {
   const goToParentDir = () => setPath(oldPath => oldPath.slice(0, -1));
 
   const goToDir = (dirname: string) => setPath(oldPath => oldPath.concat([dirname]));
+
+  // TODO: move somewhere?
+  // TODO: dir or directory
+  const [dirNameInput, setDirNameInput] = useState('');
+  const [createDirFetchState, setCreateDirFetchState] = useState<FetchState>('idle');
+
+  const handleCreateDir = () => {
+    // TODO: validation fn?
+    const invalidNames = ['', '.', '..'];
+    if (invalidNames.includes(dirNameInput) || dirNameInput.includes('/')) {
+      launchToast('error', 'Invalid name');
+      return;
+    }
+    if (createDirFetchState !== 'pending') {
+      setCreateDirFetchState('pending');
+      axios
+        // TODO: getPath and getJoinablePath?
+        .post(`/api/directory?path=${path.length ? strArrToPath(path) : ''}/${dirNameInput}`)
+        .then(() => {
+          setCreateDirFetchState('success');
+          launchToast('success', `${dirNameInput} created!`);
+          setDirNameInput('');
+          fetchFiles();
+        })
+        .catch((err: AxiosError) => {
+          setCreateDirFetchState('failed');
+          launchToast('error', err.message);
+        });
+    }
+  };
+
+  const isCreateDirDisabled = createDirFetchState === 'pending';
 
   // TODO: Oh my god, what a mess...
   return (
@@ -220,7 +251,8 @@ export default function DrivePage(): JSX.Element {
               <button
                 type="button"
                 className="secondary"
-                onClick={() => launchToast('error', 'Not implemented!')}
+                onClick={handleCreateDir}
+                disabled={isCreateDirDisabled}
               >
                 📁&ensp;Create Folder
               </button>
@@ -232,6 +264,7 @@ export default function DrivePage(): JSX.Element {
                 required
                 autoComplete="off"
                 placeholder="Folder Name"
+                disabled={isCreateDirDisabled}
               />
             </CreateStyles>
             <FileTableStyles cellSpacing="0">
