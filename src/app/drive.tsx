@@ -6,6 +6,7 @@ import { useToast } from '../components/ToastContext';
 import Uploads from '../components/Uploads';
 import { useUpload } from '../components/UploadContext';
 import LoadingBlur from '../components/LoadingBlur';
+import DriveDirectory from '../components/DriveDirectory';
 
 const WrapperStyles = styled.div`
   width: 100%;
@@ -116,10 +117,11 @@ const strArrToPath = (path: string[]) => '/'.concat(path.join('/'));
 export default function DrivePage(): JSX.Element {
   const [fetchState, setFetchState] = useState<FetchState>('idle');
   const [path, setPath] = useState<string[]>([]);
-  const [files, setFiles] = useState<DriveFile[]>([]);
+  const [files, setFiles] = useState<DriveElement[]>([]);
+  const [currentFiles, setCurrentFiles] = useState<DriveElement[]>([]);
 
   const fileInput = useRef<HTMLInputElement>(null);
-  const [dirName, setDirName] = useState('');
+  const [dirNameInput, setDirNameInput] = useState('');
 
   const launchToast = useToast();
   const { upload, addRefreshCallback, removeRefreshCallback } = useUpload();
@@ -129,8 +131,21 @@ export default function DrivePage(): JSX.Element {
     if (fetchState !== 'pending') {
       setFetchState('pending');
       axios
-        .get<DriveFile[]>(`/api/file/list-dir?directoryPath=${strArrToPath(path)}`)
-        .then(res => res.data.filter(d => d))
+        .get<DriveElement[]>(`/api/file/list-dir?directoryPath=/`)
+        .then(res =>
+          res.data
+            .filter(d => d)
+            // TODO: dir utils
+            .map(d =>
+              d.type === 'directory'
+                ? {
+                    ...d,
+                    dirname: d.directoryPath.split('/').slice(-1)[0],
+                    directoryPath: strArrToPath(d.directoryPath.split('/').slice(1, -1)),
+                  }
+                : d
+            )
+        )
         .then(data => {
           setFiles(data);
           setFetchState('success');
@@ -140,15 +155,32 @@ export default function DrivePage(): JSX.Element {
           launchToast('error', err.message);
         });
     }
-  }, [fetchState, launchToast, path]);
-
-  // temp, just for testing / demo
-  useEffect(() => {
-    setPath(['not', 'yet', 'working_path']);
-  }, []);
+  }, [fetchState, launchToast]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(fetchFiles, [path]);
+  useEffect(fetchFiles, []);
+
+  // TODO: dir utils
+  const fileSorter = (a: DriveElement, b: DriveElement): number => {
+    if (a.type === b.type) {
+      const nameA = a.type === 'directory' ? a.dirname : a.filename;
+      const nameB = b.type === 'directory' ? b.dirname : b.filename;
+      return nameA.localeCompare(nameB);
+    }
+    if (a.type === 'directory') {
+      return -1;
+    }
+    return 1;
+  };
+
+  useEffect(() => {
+    const currentPath = strArrToPath(path);
+    const filtered = files.filter(f => f.directoryPath === currentPath);
+    if (path.length) {
+      filtered.push({ type: 'directory', id: '..', dirname: '..', directoryPath: '' });
+    }
+    setCurrentFiles(filtered.sort(fileSorter));
+  }, [path, files]);
 
   useEffect(() => {
     addRefreshCallback(fetchFiles);
@@ -164,6 +196,10 @@ export default function DrivePage(): JSX.Element {
 
   const deleteFileFactory = (id: string) => () =>
     setFiles(oldFiles => oldFiles.filter(f => f.id !== id));
+
+  const goToParentDir = () => setPath(oldPath => oldPath.slice(0, -1));
+
+  const goToDir = (dirname: string) => setPath(oldPath => oldPath.concat([dirname]));
 
   // TODO: Oh my god, what a mess...
   return (
@@ -191,8 +227,8 @@ export default function DrivePage(): JSX.Element {
               <DirNameInputStyles
                 type="text"
                 name="dirName"
-                value={dirName}
-                onChange={e => setDirName(e.target.value)}
+                value={dirNameInput}
+                onChange={e => setDirNameInput(e.target.value)}
                 required
                 autoComplete="off"
                 placeholder="Folder Name"
@@ -207,9 +243,19 @@ export default function DrivePage(): JSX.Element {
                   <th>Modified</th>
                   <th>Actions</th>
                 </tr>
-                {files.map(f => (
-                  <DriveFile key={f.id} file={f} deleteFile={deleteFileFactory(f.id)} />
-                ))}
+                {currentFiles.map(f =>
+                  f.type === 'file' ? (
+                    <DriveFile key={f.id} file={f} deleteFile={deleteFileFactory(f.id)} />
+                  ) : (
+                    <DriveDirectory
+                      key={f.id}
+                      directory={f}
+                      deleteDirectory={deleteFileFactory(f.id)}
+                      goToParentDir={goToParentDir}
+                      goToDir={goToDir}
+                    />
+                  )
+                )}
               </tbody>
             </FileTableStyles>
           </DriveStyles>

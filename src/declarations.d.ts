@@ -10,6 +10,7 @@
 type FetchState = 'idle' | 'pending' | 'success' | 'failed';
 
 interface DriveFile {
+  type: 'file';
   id: string;
   filename: string;
   directoryPath: string;
@@ -17,6 +18,15 @@ interface DriveFile {
   size: number;
   contentType: string;
 }
+
+interface DriveDirectory {
+  type: 'directory';
+  id: string;
+  dirname: string;
+  directoryPath: string;
+}
+
+type DriveElement = DriveFile | DriveDirectory;
 
 declare namespace Intl {
   interface DateTimeFormatOptions {
