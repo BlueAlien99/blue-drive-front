@@ -5,6 +5,7 @@ import { useAuth } from './AuthContext';
 
 const SidebarStyles = styled.div`
   height: 100%;
+  width: 180px;
   padding: 1rem;
   box-sizing: border-box;
   display: grid;
@@ -12,6 +13,7 @@ const SidebarStyles = styled.div`
   grid-template-rows: 1fr auto auto;
   background-color: var(--darker);
   box-shadow: 0 0 16px var(--shadow-color);
+  z-index: 1000;
 `;
 
 const AuthStyles = styled.div`

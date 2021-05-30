@@ -1,7 +1,8 @@
-import axios, { AxiosError } from 'axios';
+import axios, { AxiosError, CancelTokenSource } from 'axios';
 import React, { createContext, useMemo, useContext, useState, useCallback, useEffect } from 'react';
 import { useToast } from './ToastContext';
 import { getNewUIDGenerator } from '../utils/simpleUID';
+import { useAuth } from './AuthContext';
 
 export interface UploadFile {
   id: number;
@@ -10,12 +11,14 @@ export interface UploadFile {
   status: FetchState;
   loaded: number;
   total: number;
+  cancelTokenSource: CancelTokenSource;
 }
 
 export interface UploadManager {
   upload: (files: FileList, path: string) => void;
   addRefreshCallback: (cb: () => void) => void;
   removeRefreshCallback: (cb: () => void) => void;
+  clearCompleted: () => void;
 }
 
 const UploadContext = createContext<UploadManager>({
@@ -26,6 +29,9 @@ const UploadContext = createContext<UploadManager>({
     throw Error('UploadContext has no Provider!');
   },
   removeRefreshCallback: () => {
+    throw Error('UploadContext has no Provider!');
+  },
+  clearCompleted: () => {
     throw Error('UploadContext has no Provider!');
   },
 });
@@ -47,6 +53,7 @@ export function UploadContextWrapper({ children }: UploadContextWrapperProps): J
   const generateUID = useMemo(getNewUIDGenerator, []);
 
   const launchToast = useToast();
+  const authService = useAuth();
 
   const updateFileFactory = (id: number) => (getUpdated: (oldFile: UploadFile) => UploadFile) => {
     setFiles(oldFiles => {
@@ -68,6 +75,7 @@ export function UploadContextWrapper({ children }: UploadContextWrapperProps): J
         const updateFile = updateFileFactory(id);
         const data = new FormData();
         data.append('file', file);
+        const cancelTokenSource = axios.CancelToken.source();
 
         setFiles(oldFiles =>
           oldFiles
@@ -79,6 +87,7 @@ export function UploadContextWrapper({ children }: UploadContextWrapperProps): J
                 status: 'pending',
                 loaded: 0,
                 total: file.size,
+                cancelTokenSource,
               },
             ])
             .sort((a, b) => b.id - a.id)
@@ -92,6 +101,7 @@ export function UploadContextWrapper({ children }: UploadContextWrapperProps): J
                 loaded: e.loaded,
                 total: e.total,
               })),
+            cancelToken: cancelTokenSource.token,
           })
           .then(() => {
             updateFile(oldFile => ({
@@ -113,6 +123,15 @@ export function UploadContextWrapper({ children }: UploadContextWrapperProps): J
     [generateUID, launchToast]
   );
 
+  const clearAllAndCancel = useCallback(
+    () =>
+      setFiles(oldFiles => {
+        oldFiles.forEach(f => f.cancelTokenSource.cancel(`Upload of ${f.name} cancelled!`));
+        return [];
+      }),
+    []
+  );
+
   useEffect(() => {
     if (needsRefreshing) {
       refreshCallbacks.forEach(cb => cb());
@@ -120,24 +139,18 @@ export function UploadContextWrapper({ children }: UploadContextWrapperProps): J
     }
   }, [needsRefreshing, refreshCallbacks]);
 
+  useEffect(clearAllAndCancel, [authService, clearAllAndCancel]);
+
   const uploadManager: UploadManager = useMemo(
     () => ({
       upload,
-      addRefreshCallback: cb => {
-        setRefreshCallbacks(oldCbs => [...oldCbs, cb]);
-        console.log('ADD CB ');
-      },
-      removeRefreshCallback: cb => {
-        setRefreshCallbacks(oldCbs => oldCbs.filter(oldCb => oldCb !== cb));
-        console.log('RM CB  ');
-      },
+      addRefreshCallback: cb => setRefreshCallbacks(oldCbs => [...oldCbs, cb]),
+      removeRefreshCallback: cb =>
+        setRefreshCallbacks(oldCbs => oldCbs.filter(oldCb => oldCb !== cb)),
+      clearCompleted: () => setFiles(oldFiles => oldFiles.filter(f => f.status === 'pending')),
     }),
     [upload]
   );
-
-  useEffect(() => {
-    console.log('CBS: ', refreshCallbacks.length);
-  }, [refreshCallbacks]);
 
   return (
     <>
