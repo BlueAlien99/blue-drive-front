@@ -4,6 +4,7 @@ import { useToast } from './ToastContext';
 import { getNewUIDGenerator } from '../utils/simpleUID';
 import { useAuth } from './AuthContext';
 import { axiosUpload } from '../utils/uploadService';
+import { throwNoProvider } from '../utils/utils';
 
 export interface UploadManager {
   upload: (files: FileList, path: string) => void;
@@ -14,21 +15,11 @@ export interface UploadManager {
 }
 
 const UploadContext = createContext<UploadManager>({
-  upload: () => {
-    throw Error('UploadContext has no Provider!');
-  },
-  refresh: () => {
-    throw Error('UploadContext has no Provider!');
-  },
-  addRefreshCallback: () => {
-    throw Error('UploadContext has no Provider!');
-  },
-  removeRefreshCallback: () => {
-    throw Error('UploadContext has no Provider!');
-  },
-  clearCompleted: () => {
-    throw Error('UploadContext has no Provider!');
-  },
+  upload: () => throwNoProvider('Upload'),
+  refresh: () => throwNoProvider('Upload'),
+  addRefreshCallback: () => throwNoProvider('Upload'),
+  removeRefreshCallback: () => throwNoProvider('Upload'),
+  clearCompleted: () => throwNoProvider('Upload'),
 });
 
 const UploadFilesContext = createContext<UploadFile[]>([]);

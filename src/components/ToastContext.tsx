@@ -1,6 +1,7 @@
 import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { getNewUIDGenerator } from '../utils/simpleUID';
+import { throwNoProvider } from '../utils/utils';
 import Toast from './Toast';
 
 const ToastMountPointStyles = styled.div`
@@ -25,9 +26,7 @@ export interface Toast {
 
 type ToastLauncher = (type: ToastType, msg: string) => void;
 
-const ToastContext = createContext<ToastLauncher>(() => {
-  throw Error('ToastContext has no Provider!');
-});
+const ToastContext = createContext<ToastLauncher>(() => throwNoProvider('Toast'));
 
 export const useToast = (): ToastLauncher => useContext(ToastContext);
 

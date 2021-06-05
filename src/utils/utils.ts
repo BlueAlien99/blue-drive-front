@@ -34,3 +34,7 @@ export const isValidDirName = (name: string): boolean => {
   }
   return true;
 };
+
+export const throwNoProvider = (name: string): void => {
+  throw Error(`${name}Context has no Provider!`);
+};

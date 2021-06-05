@@ -1,4 +1,5 @@
 import React, { createContext, useMemo, useContext, useState, useCallback, useEffect } from 'react';
+import { throwNoProvider } from '../utils/utils';
 import { useToast } from './ToastContext';
 
 interface Credentials {
@@ -20,12 +21,8 @@ export interface AuthService extends Credentials {
 
 const AuthContext = createContext<AuthService>({
   ...defaultCredentials,
-  login: () => {
-    throw Error('AuthContext has no Provider!');
-  },
-  logout: () => {
-    throw Error('AuthContext has no Provider!');
-  },
+  login: () => throwNoProvider('Auth'),
+  logout: () => throwNoProvider('Auth'),
 });
 
 export const useAuth = (): AuthService => useContext(AuthContext);
