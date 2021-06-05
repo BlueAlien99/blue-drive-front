@@ -1,18 +1,9 @@
-import axios, { AxiosError, CancelTokenSource } from 'axios';
+import axios, { AxiosError } from 'axios';
 import React, { createContext, useMemo, useContext, useState, useCallback, useEffect } from 'react';
 import { useToast } from './ToastContext';
 import { getNewUIDGenerator } from '../utils/simpleUID';
 import { useAuth } from './AuthContext';
-
-export interface UploadFile {
-  id: number;
-  name: string;
-  path: string;
-  status: FetchState;
-  loaded: number;
-  total: number;
-  cancelTokenSource: CancelTokenSource;
-}
+import { axiosUpload } from '../utils/uploadService';
 
 export interface UploadManager {
   upload: (files: FileList, path: string) => void;
@@ -75,53 +66,31 @@ export function UploadContextWrapper({ children }: UploadContextWrapperProps): J
   const upload = useCallback(
     (fileList: FileList, path: string) => {
       Array.from(fileList).forEach(file => {
-        const id = generateUID();
-        const updateFile = updateFileFactory(id);
         const data = new FormData();
         data.append('file', file);
-        const cancelTokenSource = axios.CancelToken.source();
 
-        setFiles(oldFiles =>
-          oldFiles
-            .concat([
-              {
-                id,
-                name: file.name,
-                path,
-                status: 'pending',
-                loaded: 0,
-                total: file.size,
-                cancelTokenSource,
-              },
-            ])
-            .sort((a, b) => b.id - a.id)
-        );
+        const uploadFile: UploadFile = {
+          id: generateUID(),
+          name: file.name,
+          path,
+          status: 'pending',
+          loaded: 0,
+          total: file.size,
+          cancelTokenSource: axios.CancelToken.source(),
+        };
 
-        axios
-          .post(`/api/file?path=${path}/${file.name}`, data, {
-            onUploadProgress: (e: ProgressEvent) =>
-              updateFile(oldFile => ({
-                ...oldFile,
-                loaded: e.loaded,
-                total: e.total,
-              })),
-            cancelToken: cancelTokenSource.token,
-          })
-          .then(() => {
-            updateFile(oldFile => ({
-              ...oldFile,
-              status: 'success',
-            }));
-            setNeedsRefreshing(true);
-            launchToast('success', `Uploaded ${file.name}`);
-          })
-          .catch((err: AxiosError) => {
-            updateFile(oldFile => ({
-              ...oldFile,
-              status: 'failed',
-            }));
-            launchToast('error', err.message);
-          });
+        setFiles(oldFiles => oldFiles.concat([uploadFile]).sort((a, b) => b.id - a.id));
+
+        const updateFile = updateFileFactory(uploadFile.id);
+
+        const onCompleted = () => {
+          setNeedsRefreshing(true);
+          launchToast('success', `Uploaded ${uploadFile.name}`);
+        };
+
+        const onError = (err: AxiosError) => launchToast('error', err.message);
+
+        void axiosUpload(data, uploadFile, updateFile, onCompleted, onError);
       });
     },
     [generateUID, launchToast]

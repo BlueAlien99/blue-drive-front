@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import { UploadFile } from './UploadContext';
 import { fractionToPercentage, bytesToHumanReadable } from '../utils/utils';
 
 const UploadFileStyles = styled.div`

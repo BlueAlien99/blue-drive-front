@@ -28,6 +28,16 @@ interface DriveDirectory {
 
 type DriveElement = DriveFile | DriveDirectory;
 
+interface UploadFile {
+  id: number;
+  name: string;
+  path: string;
+  status: FetchState;
+  loaded: number;
+  total: number;
+  cancelTokenSource: import('axios').CancelTokenSource;
+}
+
 declare namespace Intl {
   interface DateTimeFormatOptions {
     dateStyle?: 'full' | 'long' | 'medium' | 'short';
