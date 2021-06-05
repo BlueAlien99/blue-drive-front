@@ -63,7 +63,8 @@ export default function DriveFileTable({
     if (path.length) {
       filtered.push({ type: 'directory', id: '..', dirname: '..', directoryPath: '' });
     }
-    setCurrentFiles(filtered.sort(driveElementComparisonFn));
+    filtered.sort(driveElementComparisonFn);
+    setCurrentFiles(filtered);
   }, [path, files]);
 
   return (
