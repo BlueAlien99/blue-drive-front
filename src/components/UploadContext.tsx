@@ -16,6 +16,7 @@ export interface UploadFile {
 
 export interface UploadManager {
   upload: (files: FileList, path: string) => void;
+  refresh: () => void;
   addRefreshCallback: (cb: () => void) => void;
   removeRefreshCallback: (cb: () => void) => void;
   clearCompleted: () => void;
@@ -23,6 +24,9 @@ export interface UploadManager {
 
 const UploadContext = createContext<UploadManager>({
   upload: () => {
+    throw Error('UploadContext has no Provider!');
+  },
+  refresh: () => {
     throw Error('UploadContext has no Provider!');
   },
   addRefreshCallback: () => {
@@ -144,6 +148,7 @@ export function UploadContextWrapper({ children }: UploadContextWrapperProps): J
   const uploadManager: UploadManager = useMemo(
     () => ({
       upload,
+      refresh: () => setNeedsRefreshing(true),
       addRefreshCallback: cb => setRefreshCallbacks(oldCbs => [...oldCbs, cb]),
       removeRefreshCallback: cb =>
         setRefreshCallbacks(oldCbs => oldCbs.filter(oldCb => oldCb !== cb)),

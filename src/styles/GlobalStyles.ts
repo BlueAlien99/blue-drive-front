@@ -92,6 +92,23 @@ const GlobalStyles = createGlobalStyle`
     }
   }
 
+  input{
+    line-height: 1em;
+    color: var(--white);
+    border: none;
+    box-sizing: border-box;
+    outline: none;
+    transition: border 0.2s;
+
+    &:hover {
+      --input-border-color: var(--primary-dark);
+    }
+
+    &:focus {
+      --input-border-color: var(--primary);
+    }
+  }
+
   .card{
     margin: 2rem;
     padding: 4rem;

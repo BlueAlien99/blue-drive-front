@@ -1,4 +1,3 @@
-import axios, { AxiosError } from 'axios';
 import React, { createContext, useMemo, useContext, useState, useCallback, useEffect } from 'react';
 import { useToast } from './ToastContext';
 

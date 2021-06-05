@@ -9,6 +9,7 @@ const importResolverSettings = {
 const eslintRules = {
   'no-console': 'warn',
   'no-void': 'off',
+  'import/no-extraneous-dependencies': ['error', { devDependencies: ['sonarqube-scanner.js'] }],
 };
 
 const prettierRules = {

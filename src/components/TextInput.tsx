@@ -13,22 +13,9 @@ const InputStyles = styled.input`
   display: block;
   width: 100%;
   padding: 0.5em;
-  line-height: 1em;
-  color: var(--white);
   background-color: var(--darkest);
   border: 1px solid var(--input-border-color);
   border-radius: 6px;
-  box-sizing: border-box;
-  outline: none;
-  transition: border 0.2s;
-
-  &:hover {
-    --input-border-color: var(--primary-dark);
-  }
-
-  &:focus {
-    --input-border-color: var(--primary);
-  }
 `;
 
 interface TextInputProps {

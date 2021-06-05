@@ -25,3 +25,12 @@ export const dateToHumanReadable = (date: string): string => {
 };
 
 export const fractionToPercentage = (num: number): string => `${Math.round(num * 100)}%`;
+
+export const isValidDirName = (name: string): boolean => {
+  const invalidNames = ['', '.', '..'];
+
+  if (invalidNames.includes(name) || name.includes('/')) {
+    return false;
+  }
+  return true;
+};
